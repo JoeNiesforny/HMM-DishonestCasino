@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DishonestCasino", "HMM-DishonestCasino\DishonestCasino.csproj", "{742037FB-063C-498B-9D10-A06345819077}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgorithmUnitTests", "AlgorithmUnitTests\AlgorithmUnitTests.csproj", "{27D2BDD7-EA1A-4F69-AB89-B60E24691842}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{742037FB-063C-498B-9D10-A06345819077}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{742037FB-063C-498B-9D10-A06345819077}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{742037FB-063C-498B-9D10-A06345819077}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{742037FB-063C-498B-9D10-A06345819077}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27D2BDD7-EA1A-4F69-AB89-B60E24691842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27D2BDD7-EA1A-4F69-AB89-B60E24691842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27D2BDD7-EA1A-4F69-AB89-B60E24691842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27D2BDD7-EA1A-4F69-AB89-B60E24691842}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
