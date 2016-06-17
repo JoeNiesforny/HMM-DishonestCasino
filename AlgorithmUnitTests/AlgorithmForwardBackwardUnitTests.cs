@@ -16,8 +16,12 @@ namespace AlgorithmUnitTests
         static double[] InitialState;
         static int[] ObservationSequence;
         static AlgorithmForwardBackward algorithm;
-        static double probability;
-        static double probabilityHigh;
+
+        static double probabilityOfSequence;
+        static double probabilityOfSequenceSecond;
+
+        static int[] foundedSequence;
+        static double probabilityOfOccurenceFoundedSequence;
 
         Establish context = () =>
         {
@@ -30,15 +34,19 @@ namespace AlgorithmUnitTests
 
         Because of = () => 
         {
-            probability = Math.Round(algorithm.ProbabilityStateModel(new int[]{ 0,0,1,1 }), 6);
-            probabilityHigh = Math.Round(algorithm.ProbabilityStateModel(new int[] { 1, 1, 1, 0 }), 6);
+            probabilityOfSequence = Math.Round(algorithm.ProbabilityOfStateSequence(new int[] { 0, 0, 1, 1 }), 6);
+            probabilityOfSequenceSecond = Math.Round(algorithm.ProbabilityOfStateSequence(new int[] { 1, 1, 1, 0 }), 6);
+
+            probabilityOfOccurenceFoundedSequence = algorithm.FindStateSequence(out foundedSequence);
         };
 
-        It ProbabilityOfSequenceShouldBeEqualToReferenceResult = () =>
+        It ProbabilityOfStateSequenceShouldBeEqualToReferenceResult = () =>
         {
-            probability.ShouldEqual(0.000212);
-            probabilityHigh.ShouldEqual(0.002822);
+            probabilityOfSequence.ShouldEqual(0.000212);
+            probabilityOfSequenceSecond.ShouldEqual(0.002822);
         };
+
+        It AlgorithmFoundTheMostProbablyStateSequenceFromObservation = () => foundedSequence.ShouldEqual(new int[] { 1, 1, 1, 0 });
 
         Cleanup after = () =>
         {

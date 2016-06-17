@@ -10,13 +10,22 @@ namespace DishonestCasino
         int ObservationLengthSequence; // T - Length of observation sequence
         int StatesCount;               // N - Number of states in model
         int ObservationCount;          // M - Number of observation in model
-        double[,] State;         // A - State transition probabilities
-        double[,] Observation;   // B - Observation probability matrix
-        double[] Initial;        // Pi - Initial state distribution
-        int[] ObservationSequence; // O - Observation sequence
-        int[] StateSequence;       // Q - State sequence
+        double[,] State;               // A - State transition probabilities
+        double[,] Observation;         // B - Observation probability matrix
+        double[] Initial;              // Pi - Initial state distribution
+        int[] ObservationSequence;     // O - Observation sequence
+        int[] StateSequence;           // Q - State sequence
 
-        public AlgorithmForwardBackward(double[,] state, double[,] observation, double[] initial, int[] observationSequence)
+        // additional variable for algorithm forward-backward to store new model
+        double[,] NewState;
+        double[,] NewObservation;
+        double[] NewInitial;
+
+        public AlgorithmForwardBackward(
+            double[,] state,
+            double[,] observation,
+            double[] initial,
+            int[] observationSequence)
         {
             State = state;
             StatesCount = state.GetLength(1);
@@ -28,7 +37,7 @@ namespace DishonestCasino
             StateSequence = new int[observationSequence.Length];
         }
 
-        public double ProbabilityStateModel(int[] stateSequence)
+        public double ProbabilityOfStateSequence(int[] stateSequence)
         {
             int length = stateSequence.Length;
             double probability = Initial[stateSequence[0]] *
@@ -39,11 +48,39 @@ namespace DishonestCasino
             return probability;
         }
 
-        public double MostProbabilityStates(out int[] state)
+        public double FindStateSequence(out int[] states)
         {
             double probability = 0;
-            state = new int[ObservationLengthSequence];
-            // todo
+            states = new int[ObservationLengthSequence];
+            double[,] alfa, beta, gamma;
+            double[,,] digamma;
+            double compare = ForwardAlgorithm(out alfa);
+            do
+            {
+                probability = compare; 
+                gamma = BackwardAlgorithm(alfa, out beta, probability);
+                ReestimateModel(alfa, beta, probability, gamma, out digamma);
+                compare = ForwardAlgorithm(out alfa);
+            } while (probability < compare);
+
+            int mostState = 0;
+            int mostNextState = 0;
+            double mostHighestPosibility = 0;
+            for (int index = 0; index < ObservationLengthSequence; index++)
+            {
+                mostHighestPosibility = 0;
+                for (int state = 0; state < StatesCount; state++)
+                    for (int state2 = 0; state2 < StatesCount; state2++)
+                        if (digamma[index, state, state2] > mostHighestPosibility)
+                        {
+                            mostHighestPosibility = digamma[index, state, state2];
+                            mostState = state;
+                            mostNextState = state2;
+                        }
+                states[index] = mostState;
+                states[++index] = mostNextState;
+            }
+
             return probability;
         }
 
@@ -79,7 +116,7 @@ namespace DishonestCasino
             for (int state = 0; state < StatesCount; state++)
                 beta[ObservationLengthSequence - 1, state] = 1;
 
-            for (int index = ObservationLengthSequence - 2; index < 0; index--)
+            for (int index = ObservationLengthSequence - 2; index >= 0; index--)
                 for (int state = 0; state < StatesCount; state++)
                     for (int state2 = 0; state2 < StatesCount; state2++)
                         beta[index, state] += State[state, state2] * 
@@ -94,24 +131,24 @@ namespace DishonestCasino
         }
 
         // input O, N, M -> output model fi (A, B, pi)
-        void ReestimateModel(double[,] alfa, double[,] beta, double propability, double[,] gamma)
+        void ReestimateModel(double[,] alfa, double[,] beta, double propability, double[,] gamma, out double[,,] digamma)
         {
-            double[,,] digamma = new double[ObservationLengthSequence - 1, StatesCount, StatesCount];
+            digamma = new double[ObservationLengthSequence - 1, StatesCount, StatesCount];
 
-            for (int index = ObservationLengthSequence - 2; index < 0; index--)
+            for (int index = 0; index < ObservationLengthSequence - 1; index++)
                 for (int state = 0; state < StatesCount; state++)
                     for (int state2 = 0; state2 < StatesCount; state2++)
                         digamma[index, state, state2] = alfa[index, state] *
                                 State[state, state2] * Observation[state2, ObservationSequence[index + 1]] *
                                 beta[index + 1, state2] / propability;
 
-            double[] newInitialState = new double[StatesCount];
+            NewInitial = new double[StatesCount];
             for (int state = 0; state < StatesCount; state++)
-                newInitialState[state] = gamma[0, state];
+                NewInitial[state] = gamma[0, state];
 
             double sumOfGammas;
             double sumOfDigammas;
-            double[,] newStateMatrix = new double[StatesCount, StatesCount];
+            NewState = new double[StatesCount, StatesCount];
             for (int state = 0; state < StatesCount; state++)
                 for (int state2 = 0; state2 < StatesCount; state2++)
                 {
@@ -122,13 +159,13 @@ namespace DishonestCasino
                         sumOfGammas += gamma[index, state];
                         sumOfDigammas += digamma[index, state, state2];
                     }
-                    newStateMatrix[state, state2] = sumOfDigammas / sumOfGammas;
+                    NewState[state, state2] = sumOfDigammas / sumOfGammas;
                 }
 
             double sumOfGammasObservation;
-            double[,] newObservationMatrix = new double[StatesCount, ObservationLengthSequence];
+            NewObservation = new double[StatesCount, ObservationCount];
             for (int state = 0; state < StatesCount; state++)
-                for (int observation = 0; observation < ObservationLengthSequence; observation++)
+                for (int observation = 0; observation < ObservationCount; observation++)
                 {
                     sumOfGammas = 0;
                     sumOfGammasObservation = 0;
@@ -137,7 +174,7 @@ namespace DishonestCasino
                         sumOfGammas += gamma[index, state];
                         sumOfGammasObservation += gamma[ObservationSequence[index], state];
                     }
-                    newObservationMatrix[state, observation] = sumOfGammasObservation / sumOfGammas;
+                    NewObservation[state, observation] = sumOfGammasObservation / sumOfGammas;
                 }
         }
     }
