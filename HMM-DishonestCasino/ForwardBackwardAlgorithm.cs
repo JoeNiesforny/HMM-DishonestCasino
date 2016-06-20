@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DishonestCasino
 {
-    public class AlgorithmForwardBackward
+    public class ForwardBackwardAlgorithm
     {
         int ObservationLengthSequence; // T - Length of observation sequence
         int StatesCount;               // N - Number of states in model
@@ -14,14 +14,13 @@ namespace DishonestCasino
         double[,] Observation;         // B - Observation probability matrix
         double[] Initial;              // Pi - Initial state distribution
         int[] ObservationSequence;     // O - Observation sequence
-        int[] StateSequence;           // Q - State sequence
 
         // additional variable for algorithm forward-backward to store new model
         double[,] NewState;
         double[,] NewObservation;
         double[] NewInitial;
 
-        public AlgorithmForwardBackward(
+        public ForwardBackwardAlgorithm(
             double[,] state,
             double[,] observation,
             double[] initial,
@@ -34,7 +33,6 @@ namespace DishonestCasino
             Initial = initial;
             ObservationSequence = observationSequence;
             ObservationLengthSequence = observationSequence.Length;
-            StateSequence = new int[observationSequence.Length];
         }
 
         public double ProbabilityOfStateSequence(int[] stateSequence)
@@ -56,7 +54,8 @@ namespace DishonestCasino
             double[,,] digamma;
             double compare = ForwardAlgorithm(out alfa);
             do
-            {
+            {   // If computing take to much time (because of model complication)
+                // there is a possibility to make a stop of algorithm by adding iteration limit
                 probability = compare; 
                 gamma = BackwardAlgorithm(alfa, out beta, probability);
                 ReestimateModel(alfa, beta, probability, gamma, out digamma);

@@ -9,19 +9,19 @@ using DishonestCasino;
 namespace AlgorithmUnitTests
 {
     [Subject("AlgorithmForwardBackwardUnitTests")]
-    public class AlgorithmForwardBackwardUnitTests
+    public class ForwardBackwardAlgorithmUnitTests
     {
         static double[,] StateMatrix;
         static double[,] ObservationMatrix;
         static double[] InitialState;
         static int[] ObservationSequence;
-        static AlgorithmForwardBackward algorithm;
+        static ForwardBackwardAlgorithm algorithm;
 
         static double probabilityOfSequence;
         static double probabilityOfSequenceSecond;
 
         static int[] foundedSequence;
-        static double probabilityOfOccurenceFoundedSequence;
+        static double probabilityOfObservationWhenUsingExactModel;
 
         static List<int[]> allPossibleSequence;
         static double sumOfProbabilityOfAllPossibleSequence;
@@ -46,15 +46,15 @@ namespace AlgorithmUnitTests
             ObservationMatrix = new double[,] { { 0.1, 0.4, 0.5 }, { 0.7, 0.2, 0.1 } };
             InitialState = new double[] { 0.6, 0.4 };
             ObservationSequence = new int[] { 0, 1, 0, 2 };
-            algorithm = new AlgorithmForwardBackward(StateMatrix, ObservationMatrix, InitialState, ObservationSequence);
+            algorithm = new ForwardBackwardAlgorithm(StateMatrix, ObservationMatrix, InitialState, ObservationSequence);
         };
 
         Because of = () => 
         {
-            probabilityOfSequence = Math.Round(algorithm.ProbabilityOfStateSequence(new int[] { 0, 0, 1, 1 }), 6);
-            probabilityOfSequenceSecond = Math.Round(algorithm.ProbabilityOfStateSequence(new int[] { 1, 1, 1, 0 }), 6);
+            probabilityOfSequence = algorithm.ProbabilityOfStateSequence(new int[] { 0, 0, 1, 1 });
+            probabilityOfSequenceSecond = algorithm.ProbabilityOfStateSequence(new int[] { 1, 1, 1, 0 });
 
-            probabilityOfOccurenceFoundedSequence = algorithm.FindStateSequence(out foundedSequence);
+            probabilityOfObservationWhenUsingExactModel = algorithm.FindStateSequence(out foundedSequence);
 
             foreach (var sequence in allPossibleSequence)
                 sumOfProbabilityOfAllPossibleSequence += algorithm.ProbabilityOfStateSequence(sequence);
@@ -62,14 +62,14 @@ namespace AlgorithmUnitTests
 
         It ProbabilityOfStateSequenceShouldBeEqualToReferenceResult = () =>
         {
-            probabilityOfSequence.ShouldEqual(0.000212);
-            probabilityOfSequenceSecond.ShouldEqual(0.002822);
+            probabilityOfSequence.ShouldBeCloseTo(0.000212, 0.000001);
+            probabilityOfSequenceSecond.ShouldBeCloseTo(0.002822, 0.000001);
         };
 
         It AlgorithmFoundTheMostProbablyStateSequenceFromObservation = () => 
                         foundedSequence.ShouldEqual(new int[] { 1, 1, 1, 0 });
 
         It FoundedSequenceProbabilityShouldBeEqualToSumOfAllPossibleProbability = () => 
-            double.Equals(sumOfProbabilityOfAllPossibleSequence, probabilityOfOccurenceFoundedSequence);
+            sumOfProbabilityOfAllPossibleSequence.ShouldBeCloseTo(probabilityOfObservationWhenUsingExactModel, 0.000001);
     }
 }
