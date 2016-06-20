@@ -176,5 +176,24 @@ namespace DishonestCasino
                     NewObservation[state, observation] = sumOfGammasObservation / sumOfGammas;
                 }
         }
+
+        public bool GetNewModel(out double[] inital, out double[,] state, out double[,] observation)
+        {
+            if (NewInitial != null && NewState != null && NewObservation != null)
+            {
+                inital = NewInitial;
+                state = NewState;
+                observation = NewObservation;
+                return true;
+            }
+            else
+            {
+                inital = null;
+                state = null;
+                observation = null;
+                return false;
+            }
+        }
+
     }
 }

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DishonestCasino", "HMM-Dish
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgorithmUnitTests", "AlgorithmUnitTests\AlgorithmUnitTests.csproj", "{27D2BDD7-EA1A-4F69-AB89-B60E24691842}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DishonestCasinoApp", "HMM-DishonestCasinoApp\DishonestCasinoApp.csproj", "{AEDD5BE2-13B2-44EA-B68E-24CA494D430C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{27D2BDD7-EA1A-4F69-AB89-B60E24691842}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27D2BDD7-EA1A-4F69-AB89-B60E24691842}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27D2BDD7-EA1A-4F69-AB89-B60E24691842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEDD5BE2-13B2-44EA-B68E-24CA494D430C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEDD5BE2-13B2-44EA-B68E-24CA494D430C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEDD5BE2-13B2-44EA-B68E-24CA494D430C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEDD5BE2-13B2-44EA-B68E-24CA494D430C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
