@@ -1,10 +1,6 @@
-﻿using Machine.Specifications;
-using System;
+﻿using DishonestCasino;
+using Machine.Specifications;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DishonestCasino;
 
 namespace AlgorithmUnitTests
 {

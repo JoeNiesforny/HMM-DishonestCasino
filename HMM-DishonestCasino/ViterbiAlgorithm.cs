@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HMM_DishonestCasino
+﻿namespace DishonestCasino
 {
     // dynamic programming way
-    public class ViterbiAlgorithm
+    public class ViterbiAlgorithm : IAlgorithm
     {
         int ObservationLengthSequence; // T - Length of observation sequence
         int StatesCount;               // N - Number of states in model

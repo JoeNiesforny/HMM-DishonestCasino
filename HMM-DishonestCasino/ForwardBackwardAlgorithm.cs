@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DishonestCasino
+﻿namespace DishonestCasino
 {
-    public class ForwardBackwardAlgorithm
+    public class ForwardBackwardAlgorithm : IAlgorithm
     {
         int ObservationLengthSequence; // T - Length of observation sequence
         int StatesCount;               // N - Number of states in model
