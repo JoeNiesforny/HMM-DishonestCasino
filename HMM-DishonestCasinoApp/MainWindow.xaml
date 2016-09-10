@@ -15,15 +15,9 @@
                     <Label x:Name="label1" Content="Wielkość kostki:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="95"/>
                     <TextBox x:Name="throwCountTextBox" HorizontalAlignment="Left" Height="23" Margin="110,42,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="120" IsInactiveSelectionHighlightEnabled="True"/>
                     <Label x:Name="label1_Copy" Content="Ilość rzutów:" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Width="95"/>
-                    <TextBox x:Name="successThrowCountTextBox" HorizontalAlignment="Left" Height="23" Margin="110,70,0,0" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="120" IsInactiveSelectionHighlightEnabled="True"/>
-                    <Label x:Name="label1_Copy1" Content="Ilość trafień:" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Width="95"/>
-                    <Button x:Name="generateModelButton" Content="Generuj model" HorizontalAlignment="Left" Margin="30,109,0,0" VerticalAlignment="Top" Width="200" Height="28" Click="generateModelButton_Click"/>
-                    <DataGrid x:Name="observationSequenceDataGrid" HorizontalAlignment="Left" Margin="241,40,0,0" VerticalAlignment="Top" Height="169" Width="152" ItemsSource="{Binding}" AutoGenerateColumns="False">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding}" Header="Value of dice"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <Button x:Name="generateModelButton" Content="Generuj model" HorizontalAlignment="Left" Margin="30,87,0,0" VerticalAlignment="Top" Width="200" Height="28" Click="generateModelButton_Click"/>
                     <Label x:Name="label3" Content="Obserwacja" HorizontalAlignment="Left" Margin="251,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
+                    <DataGrid x:Name="observationSequenceDataGrid" HorizontalAlignment="Left" Height="193" Margin="251,40,0,0" VerticalAlignment="Top" Width="138"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Model">

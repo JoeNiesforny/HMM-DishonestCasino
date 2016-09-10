@@ -16,29 +16,9 @@ using System.Windows.Shapes;
 
 namespace HMM_DishonestCasinoApp
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        ForwardBackwardAlgorithm algorithmForwardBackward;
-        ViterbiAlgorithm algorithmViterbi;
-
-        // Start of algorithm variables
-        double[,] StateMatrix;
-        double[,] ObservationMatrix;
-        double[] InitialState;
-        int[] ObservationSequence;
-
-        double probabilityOfSequence;
-        double probabilityOfSequenceSecond;
-
-        int[] foundedSequence;
-        double probabilityOfObservationWhenUsingExactModel;
-
-        List<int[]> allPossibleSequence;
-        double sumOfProbabilityOfAllPossibleSequence;
-        // End of algorithm variables
+        Model model;
 
         public MainWindow()
         {
@@ -49,28 +29,22 @@ namespace HMM_DishonestCasinoApp
         {
             uint diceCount;
             uint throwCount;
-            uint successThrowCount;
             try
             {
                 diceCount = uint.Parse(diceCountTextBox.Text);
                 throwCount = uint.Parse(throwCountTextBox.Text);
-                successThrowCount = uint.Parse(successThrowCountTextBox.Text);
             }
-            catch (ArgumentException err)
+            catch (ArgumentException)
             {
                 throw new ArgumentException("Bad format! Please provide natural number.");
             }
 
-            ObservationSequence = new int[throwCount];
+            model = new Model(diceCount, throwCount);
 
-            var random = new Random();
-            for (uint kick = 0; kick < throwCount; kick++)
-            {
-                ObservationSequence[kick] = ((int) (random.Next() % diceCount + 1));
-            }
-
-            observationSequenceDataGrid.ItemsSource = ObservationSequence;
-            //observationMatrixDataGrid.UpdateLayout();
+            observationSequenceDataGrid.ItemsSource = model.ObservationSequence;
+            initialMatrixDataGrid.ItemsSource = model.InitialState;
+            stateMatrixDataGrid.ItemsSource = model.StateMatrix;
+            observationMatrixDataGrid.ItemsSource = model.ObservationMatrix;
         }
 
     }
