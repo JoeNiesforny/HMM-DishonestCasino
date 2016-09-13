@@ -27,34 +27,31 @@ namespace HMM_DishonestCasinoApp
 
         private void generateModelButton_Click(object sender, RoutedEventArgs e)
         {
-            uint diceCount;
+            uint eventCount;
             uint throwCount;
             try
             {
-                diceCount = uint.Parse(diceCountTextBox.Text);
+                eventCount = uint.Parse(diceCountTextBox.Text);
                 throwCount = uint.Parse(throwCountTextBox.Text);
             }
             catch (ArgumentException)
             {
                 throw new ArgumentException("Bad format! Please provide natural number.");
             }
-            model = new Model(diceCount, throwCount);
-            observationSequenceDataGrid.ItemsSource = model.ObservationSequence;
-            initialMatrixDataGrid.ItemsSource = model.InitialState;
-            stateMatrixDataGrid.ItemsSource = model.StateMatrix;
-            observationMatrixDataGrid.ItemsSource = model.ObservationMatrix;
+            model = new Model(eventCount, throwCount);
+            observationSequenceDataGrid.ItemsSource = model.ObservationSequence.DefaultView;
+            initialMatrixDataGrid.ItemsSource = model.InitialState.DefaultView;
+            stateMatrixDataGrid.ItemsSource = model.StateMatrix.DefaultView;
+            observationMatrixDataGrid.ItemsSource = model.ObservationMatrix.DefaultView;
         }
 
         private void compute_button_Click(object sender, RoutedEventArgs e)
         {
             model.Compute();
-            FBAStateSequenceDataGrid.ItemsSource = model.ResultForwardBackward.FoundedSequence;
-            FBAProbabiltyTextBlock.Text = "Probability: " + model.ResultForwardBackward.ProbabilityOfSequence;
-            ViterbiStateSequenceDataGrid.ItemsSource = model.ResultViterbi.FoundedSequence;
-            ViterbiProbabiltyTextBlock.Text = "Probability: " + model.ResultViterbi.ProbabilityOfSequence;
-            newInitialMatrixDataGrid.ItemsSource = model.NewModelForwardBackward.InitialState;
-            newStateMatrixDataGrid.ItemsSource = model.NewModelForwardBackward.StateMatrix;
-            newObservationMatrixDataGrid.ItemsSource = model.NewModelForwardBackward.ObservationMatrix;
+            ResultDataGrid.ItemsSource = model.ShowResult();
+            newInitialMatrixDataGrid.ItemsSource = model.NewModelForwardBackward.InitialState.DefaultView;
+            newStateMatrixDataGrid.ItemsSource = model.NewModelForwardBackward.StateMatrix.DefaultView;
+            newObservationMatrixDataGrid.ItemsSource = model.NewModelForwardBackward.ObservationMatrix.DefaultView;
         }
     }
 }

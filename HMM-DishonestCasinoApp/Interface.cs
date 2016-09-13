@@ -1,6 +1,7 @@
 ﻿using DishonestCasino;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,36 +14,16 @@ namespace HMM_DishonestCasinoApp
         public static ViterbiAlgorithm AlgorithmViterbi;
     }
 
-    // Value of throw is integer.
-    public class Observation
-    {
-        public Observation(int value)
-        {
-            Value = value;
-        }
-        public int Value { get; set; }
-    }
-
-    // Value of transition is double.
-    public class StateTransition
-    {
-        public StateTransition(double value1, double value2)
-        {
-            Value1 = value1;
-            Value2 = value2;
-        }
-        public double Value1 { get; set; }
-        public double Value2 { get; set; }
-    }
     public class Model
     {
-        public uint DiceCount;
+        private readonly int _accurarcy = 15;
+        public uint EventCount;
         public uint ThrowCount;
 
-        public List<StateTransition> StateMatrix;
-        public List<StateTransition> ObservationMatrix;
-        public List<StateTransition> InitialState;
-        public List<Observation> ObservationSequence;
+        public DataTable StateMatrix;
+        public DataTable ObservationMatrix;
+        public DataTable InitialState;
+        public DataTable ObservationSequence;
 
         private int[] _observationSequence;
         private double[] _initialState;
@@ -56,68 +37,56 @@ namespace HMM_DishonestCasinoApp
         // Generate new model
         public Model(uint diceCount, uint throwCount)
         {
-            DiceCount = diceCount;
+            EventCount = diceCount;
             ThrowCount = throwCount;
             var random = new Random();
-            ObservationSequence = new List<Observation>();
+            _observationSequence = new int[throwCount];
             for (uint kick = 0; kick < throwCount; kick++)
-                ObservationSequence.Add(new Observation((int)(random.Next() % diceCount + 1)));
-            InitialState = new List<StateTransition>();
-            var value = double.Parse(random.NextDouble().ToString().Substring(0, 5));
-            InitialState.Add(new StateTransition(value, Math.Abs(value - 1)));
-            ObservationMatrix = new List<StateTransition>();
-            StateMatrix = new List<StateTransition>();
+                _observationSequence[kick] = (int)(random.Next() % diceCount);
+            _initialState = new double[2];
+            var value = Math.Round(random.NextDouble(), _accurarcy);
+            _initialState[0] = value;
+            _initialState[1] = Math.Abs(value - 1);
+            _stateMatrix = new double[2, 2];
             for (uint kick = 0; kick < 2; kick++)
             {
-                value = double.Parse(random.NextDouble().ToString().Substring(0, 5));
-                ObservationMatrix.Add(new StateTransition(value, Math.Abs(value - 1)));
-                value = double.Parse(random.NextDouble().ToString().Substring(0, 5));
-                StateMatrix.Add(new StateTransition(value, Math.Abs(value - 1)));
+                value = Math.Round(random.NextDouble(), _accurarcy);
+                _stateMatrix[kick, 0] = value;
+                _stateMatrix[kick, 1] = Math.Abs(value - 1);
             }
+            _observationMatrix = new double[2, diceCount];
+            for (uint i = 0; i < 2; i++)
+            {
+                double[] values = new double[diceCount];
+                for (uint j = 0; j < diceCount; j++)
+                    values[j] = Math.Round(random.NextDouble(), _accurarcy);
+                var divider = (values.Sum()) / 1;
+                for (uint j = 0; j < diceCount; j++)
+                    _observationMatrix[i, j] = Math.Round(values[j] / divider, _accurarcy);
+            }
+            Converter.ConvertToDataTable(out ObservationSequence, _observationSequence);
+            Converter.ConvertToDataTable(out InitialState, _initialState);
+            Converter.ConvertToDataTable(out StateMatrix, _stateMatrix);
+            Converter.ConvertToDataTable(out ObservationMatrix, _observationMatrix);
         }
 
         // Get a new model with known initial, state and observation matrix
         Model(double [] initial, double[,] state, double[,] observation)
         {
-            InitialState = new List<StateTransition>();
-            InitialState.Add(new StateTransition(initial[0], initial[1]));
-            ObservationMatrix = new List<StateTransition>();
-            StateMatrix = new List<StateTransition>();
-            for (uint kick = 0; kick < 2; kick++)
-            {
-                ObservationMatrix.Add(new StateTransition(observation[0, kick], observation[1, kick]));
-                StateMatrix.Add(new StateTransition(state[0, kick], state[1, kick]));
-            }
+            _initialState = initial;
+            _stateMatrix = state;
+            _observationMatrix = observation;
+            Converter.ConvertToDataTable(out InitialState, _initialState);
+            Converter.ConvertToDataTable(out StateMatrix, _stateMatrix);
+            Converter.ConvertToDataTable(out ObservationMatrix, _observationMatrix);
         }
 
         private void Gather()
         {
-            _observationSequence = new int[ObservationSequence.Count];
-            var iter = 0;
-            foreach (var v in ObservationSequence)
-            {
-                _observationSequence[iter] = v.Value;
-                iter++;
-            }
-            _initialState = new double[2];
-            _initialState[0] = InitialState[0].Value1;
-            _initialState[1] = InitialState[0].Value2;
-            _stateMatrix = new double[2, StateMatrix.Count];
-            iter = 0;
-            foreach (var v in StateMatrix)
-            {
-                _stateMatrix[0, iter] = v.Value1;
-                _stateMatrix[1, iter] = v.Value2;
-                iter++;
-            }
-            _observationMatrix = new double[2, ObservationMatrix.Count];
-            iter = 0;
-            foreach (var v in ObservationMatrix)
-            {
-                _observationMatrix[0, iter] = v.Value1;
-                _observationMatrix[1, iter] = v.Value2;
-                iter++;
-            }
+            Converter.ConvertToArray(out _observationMatrix, ObservationMatrix);
+            Converter.ConvertToArray(out _stateMatrix, StateMatrix);
+            Converter.ConvertToArray(out _initialState, InitialState);
+            Converter.ConvertToArray(out _observationSequence, ObservationSequence);
         }
 
         public void Compute()
@@ -143,25 +112,105 @@ namespace HMM_DishonestCasinoApp
                 ResultViterbi = new Result(newStates, result);
             }
         }
+
+        public DataView ShowResult()
+        {
+            var result = new DataTable();
+            result.Columns.Add(new DataColumn("Forward&Backward sequence"));
+            result.Columns.Add(new DataColumn("Forward&Backward probability"));
+            result.Columns.Add(new DataColumn("Viterbi sequence"));
+            result.Columns.Add(new DataColumn("Viterbi probability"));
+            for (int i = 0; i < _observationSequence.Length; i++)
+            {
+                var newRow = result.NewRow();
+                if (i == 0)
+                {
+                    newRow[1] = ResultForwardBackward.ProbabilityOfSequence;
+                    newRow[3] = ResultViterbi.ProbabilityOfSequence;
+                }
+                else
+                    newRow[1] = newRow[3] = "";
+                newRow[0] = ResultForwardBackward.FoundedSequence[i];
+                newRow[2] = ResultViterbi.FoundedSequence[i];
+                result.Rows.Add(newRow);
+            }
+            return result.DefaultView;
+        }
     }
 
     public class Result
     {
         public double ProbabilityOfSequence { get; set; }
-
-        public List<Observation> FoundedSequence;
-        //public double ProbabilityOfObservationWhenUsingExactModel { get; set; }
-
-        //// many list
-        //public List<Observation> AllPossibleSequence;
-        //public double SumOfProbabilityOfAllPossibleSequence;
-
+        public int[] FoundedSequence;
         public Result(int[] foundedStates, double probabilityOfSequence)
         {
-            FoundedSequence = new List<Observation>();
-            foreach (var value in foundedStates)
-                FoundedSequence.Add(new Observation(value));
+            FoundedSequence = foundedStates;
             ProbabilityOfSequence = probabilityOfSequence;
+        }
+    }
+
+    static class Converter
+    {
+        public static void ConvertToDataTable(out DataTable table, int[] array)
+        {
+            table = new DataTable();
+            table.Columns.Add();
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                var newRow = table.NewRow();
+                newRow[0] = array[i];
+                table.Rows.Add(newRow);
+            }
+            table.DefaultView.AllowNew = false;
+            table.DefaultView.AllowDelete = false;
+        }
+        public static void ConvertToArray(out int[] array, DataTable table)
+        {
+            array = new int[table.Rows.Count];
+            for (var row = 0; row < table.Rows.Count; row++)
+                array[row] = int.Parse(table.Rows[row][0].ToString().Replace('.', ','));
+        }
+        public static void ConvertToDataTable(out DataTable table, double[] array)
+        {
+            table = new DataTable();
+            for (int i = 0; i < array.GetLength(0); i++)
+                table.Columns.Add();
+            var newRow = table.NewRow();
+            for (int i = 0; i < array.GetLength(0); i++)
+                newRow[i] = array[i];
+            table.Rows.Add(newRow);
+            table.DefaultView.AllowNew = false;
+            table.DefaultView.AllowDelete = false;
+        }
+        public static void ConvertToArray(out double[] array, DataTable table)
+        {
+            array = new double[table.Columns.Count];
+            for (var i = 0; i < table.Columns.Count; i++)
+                array[i] = double.Parse(table.Rows[0][i].ToString().Replace('.', ','));
+        }
+        public static void ConvertToDataTable(out DataTable table, double[,] array)
+        {
+            table = new DataTable();
+            for (int i = 0; i < array.GetLength(1); i++)
+                table.Columns.Add();
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                var newRow = table.NewRow();
+                for (int j = 0; j < array.GetLength(1); j++)
+                    newRow[j] = array[i, j];
+                table.Rows.Add(newRow);
+            }
+            table.DefaultView.AllowNew = false;
+            table.DefaultView.AllowDelete = false;
+        }
+        public static void ConvertToArray(out double[,] array, DataTable table)
+        {
+            array = new double[table.Rows.Count, table.Columns.Count];
+            for (var i = 0; i < table.Columns.Count; i++)
+            {
+                for (int j = 0; j < table.Rows.Count; j++)
+                    array[j, i] = double.Parse(table.Rows[j][i].ToString().Replace('.', ','));
+            }
         }
     }
 }

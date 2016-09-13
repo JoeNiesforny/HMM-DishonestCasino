@@ -34,10 +34,10 @@
         {
             int length = stateSequence.Length;
             double probability = Initial[stateSequence[0]] *
-                Observation[stateSequence[0], ObservationSequence[0]];
+                                 Observation[stateSequence[0], ObservationSequence[0]];
             for (int index = 1; index < length; index++)
-                probability *= State[stateSequence[index - 1], stateSequence[index]] * 
-                    Observation[stateSequence[index], ObservationSequence[index]];
+                probability *= State[stateSequence[index - 1], stateSequence[index]] *
+                               Observation[stateSequence[index], ObservationSequence[index]];
             return probability;
         }
 
@@ -46,17 +46,19 @@
             double probability = 0;
             states = new int[ObservationLengthSequence];
             double[,] alfa, beta, gamma;
-            double[,,] digamma;
+            double[, ,] digamma;
+            // First step to compute Alfa value
             double compare = ForwardAlgorithm(out alfa);
             do
-            {   // If computing take to much time (because of model complication)
+            {
+                // If computing take to much time (because of model complication)
                 // there is a possibility to make a stop of algorithm by adding iteration limit
-                probability = compare; 
+                probability = compare;
                 gamma = BackwardAlgorithm(alfa, out beta, probability);
                 ReestimateModel(alfa, beta, probability, gamma, out digamma);
                 compare = ForwardAlgorithm(out alfa);
-            } while (probability < compare);
-
+            }
+            while (probability < compare);
             int mostState = 0;
             int mostNextState = 0;
             double mostHighestPosibility = 0;
@@ -74,7 +76,6 @@
                 states[index] = mostState;
                 states[++index] = mostNextState;
             }
-
             return probability;
         }
 
@@ -84,7 +85,6 @@
             alfa = new double[ObservationLengthSequence, StatesCount];
             for (int state = 0; state < StatesCount; state++) // for i = 0, 1, ..., N -1
                 alfa[0, state] = Initial[state] * Observation[state, ObservationSequence[0]];
-
             double sum = 0;
             for (int sequenceIndex = 1; sequenceIndex < ObservationLengthSequence; sequenceIndex++) // for t = 1, 2, ..., T-1
                 for (int state = 0; state < StatesCount; state++) // for i = 0, 1, ..., N -1
@@ -94,11 +94,9 @@
                     alfa[sequenceIndex, state] = sum * Observation[state, ObservationSequence[sequenceIndex]];
                     sum = 0;
                 }
-
             double probability = 0;
             for (int state = 0; state < StatesCount; state++) // for i = 0, 1, ..., N -1
                 probability += alfa[ObservationLengthSequence - 1, state];
-
             return probability;
         }
 
@@ -106,17 +104,14 @@
         double[,] BackwardAlgorithm(double[,] alfa, out double[,] beta, double propability)
         {
             beta = new double[ObservationLengthSequence, StatesCount];
-
             for (int state = 0; state < StatesCount; state++)
                 beta[ObservationLengthSequence - 1, state] = 1;
-
             for (int index = ObservationLengthSequence - 2; index >= 0; index--)
                 for (int state = 0; state < StatesCount; state++)
                     for (int state2 = 0; state2 < StatesCount; state2++)
-                        beta[index, state] += State[state, state2] * 
-                                Observation[state2, ObservationSequence[index + 1]] * 
-                                beta[index + 1, state2];
-
+                        beta[index, state] += State[state, state2] *
+                                              Observation[state2, ObservationSequence[index + 1]] *
+                                              beta[index + 1, state2];
             double[,] gamma = new double[ObservationLengthSequence - 1, StatesCount];
             for (int index = 0; index < ObservationLengthSequence - 1; index++)
                 for (int state = 0; state < StatesCount; state++)
@@ -125,21 +120,18 @@
         }
 
         // input O, N, M -> output model fi (A, B, pi)
-        void ReestimateModel(double[,] alfa, double[,] beta, double propability, double[,] gamma, out double[,,] digamma)
+        void ReestimateModel(double[,] alfa, double[,] beta, double propability, double[,] gamma, out double[, ,] digamma)
         {
             digamma = new double[ObservationLengthSequence - 1, StatesCount, StatesCount];
-
             for (int index = 0; index < ObservationLengthSequence - 1; index++)
                 for (int state = 0; state < StatesCount; state++)
                     for (int state2 = 0; state2 < StatesCount; state2++)
                         digamma[index, state, state2] = alfa[index, state] *
-                                State[state, state2] * Observation[state2, ObservationSequence[index + 1]] *
-                                beta[index + 1, state2] / propability;
-
+                                                        State[state, state2] * Observation[state2, ObservationSequence[index + 1]] *
+                                                        beta[index + 1, state2] / propability;
             NewInitial = new double[StatesCount];
             for (int state = 0; state < StatesCount; state++)
                 NewInitial[state] = gamma[0, state];
-
             double sumOfGammas;
             double sumOfDigammas;
             NewState = new double[StatesCount, StatesCount];
@@ -155,7 +147,6 @@
                     }
                     NewState[state, state2] = sumOfDigammas / sumOfGammas;
                 }
-
             double sumOfGammasObservation;
             NewObservation = new double[StatesCount, ObservationCount];
             for (int state = 0; state < StatesCount; state++)
@@ -166,7 +157,8 @@
                     for (int index = 0; index < ObservationLengthSequence - 1; index++)
                     {
                         sumOfGammas += gamma[index, state];
-                        sumOfGammasObservation += gamma[ObservationSequence[index], state];
+                        if (ObservationSequence[index] == observation)
+                            sumOfGammasObservation += gamma[index, state];
                     }
                     NewObservation[state, observation] = sumOfGammasObservation / sumOfGammas;
                 }
