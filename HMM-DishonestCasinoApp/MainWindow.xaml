@@ -5,39 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HMM_DishonestCasinoApp"
         mc:Ignorable="d"
-        Title="Dishonest Casino" Height="350" Width="525">
+        Title="Dishonest Casino" Height="416.666" Width="608.334">
     <Grid>
-        <Button x:Name="button" Content="Oblicz" HorizontalAlignment="Left" Margin="432,36,0,0" VerticalAlignment="Top" Width="75"/>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="299" Margin="10,10,0,0" VerticalAlignment="Top" Width="409">
+        <Button x:Name="compute_button" Content="Oblicz" HorizontalAlignment="Left" Margin="515,32,0,0" VerticalAlignment="Top" Width="75" Click="compute_button_Click"/>
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="332" Margin="10,10,0,0" VerticalAlignment="Top" Width="483">
             <TabItem Header="Obserwacja">
-                <Grid Background="#FFE5E5E5">
+                <Grid Background="#FFE5E5E5" Margin="0,0,-49,-29" RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="0.166"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Grid.RenderTransform>
                     <TextBox x:Name="diceCountTextBox" HorizontalAlignment="Left" Height="23" Margin="110,14,0,0" TextWrapping="Wrap" Text="6" VerticalAlignment="Top" Width="120" IsInactiveSelectionHighlightEnabled="True"/>
                     <Label x:Name="label1" Content="Wielkość kostki:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="95"/>
                     <TextBox x:Name="throwCountTextBox" HorizontalAlignment="Left" Height="23" Margin="110,42,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="120" IsInactiveSelectionHighlightEnabled="True"/>
                     <Label x:Name="label1_Copy" Content="Ilość rzutów:" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Width="95"/>
                     <Button x:Name="generateModelButton" Content="Generuj model" HorizontalAlignment="Left" Margin="30,87,0,0" VerticalAlignment="Top" Width="200" Height="28" Click="generateModelButton_Click"/>
-                    <Label x:Name="label3" Content="Obserwacja" HorizontalAlignment="Left" Margin="251,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
-                    <DataGrid x:Name="observationSequenceDataGrid" HorizontalAlignment="Left" Height="193" Margin="251,40,0,0" VerticalAlignment="Top" Width="138"/>
+                    <Label x:Name="label3" Content="Obserwacja" HorizontalAlignment="Left" Margin="279,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
+                    <DataGrid x:Name="observationSequenceDataGrid" HorizontalAlignment="Left" Height="193" Margin="279,40,0,0" VerticalAlignment="Top" Width="138"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Model">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid x:Name="initialMatrixDataGrid" HorizontalAlignment="Left" Margin="0,36,0,0" VerticalAlignment="Top" Height="169" Width="128"/>
+                    <DataGrid x:Name="initialMatrixDataGrid" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Height="184" Width="133"/>
                     <Label x:Name="label" Content="Initial" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
-                    <DataGrid x:Name="stateMatrixDataGrid" HorizontalAlignment="Left" Margin="133,36,0,0" VerticalAlignment="Top" Height="169" Width="128"/>
-                    <Label x:Name="label_Copy" Content="State" HorizontalAlignment="Left" Margin="143,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
-                    <DataGrid x:Name="observationMatrixDataGrid" HorizontalAlignment="Left" Margin="266,36,0,0" VerticalAlignment="Top" Height="169" Width="128"/>
-                    <Label x:Name="label_Copy1" Content="Emission &#xD;&#xA;" HorizontalAlignment="Left" Margin="276,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013" Width="65" Height="26"/>
+                    <DataGrid x:Name="stateMatrixDataGrid" HorizontalAlignment="Left" Margin="148,41,0,0" VerticalAlignment="Top" Height="184" Width="133"/>
+                    <Label x:Name="label_Copy" Content="State" HorizontalAlignment="Left" Margin="148,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
+                    <DataGrid x:Name="observationMatrixDataGrid" HorizontalAlignment="Left" Margin="287,41,0,0" VerticalAlignment="Top" Height="184" Width="133"/>
+                    <Label x:Name="label_Copy1" Content="Emission &#xD;&#xA;" HorizontalAlignment="Left" Margin="287,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013" Width="65" Height="26"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Nowy model">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid x:Name="newInitialMatrixDataGrid" HorizontalAlignment="Left" Margin="0,36,0,0" VerticalAlignment="Top" Height="169" Width="128"/>
-                    <Label x:Name="label2" Content="Initial" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
-                    <DataGrid x:Name="newStateMatrixDataGrid" HorizontalAlignment="Left" Margin="133,36,0,0" VerticalAlignment="Top" Height="169" Width="128"/>
-                    <Label x:Name="label_Copy2" Content="State" HorizontalAlignment="Left" Margin="143,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
-                    <DataGrid x:Name="newObservationMatrixDataGrid" HorizontalAlignment="Left" Margin="266,36,0,0" VerticalAlignment="Top" Height="169" Width="128"/>
-                    <Label x:Name="label_Copy12" Content="Emission &#xD;&#xA;" HorizontalAlignment="Left" Margin="276,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013" Width="65" Height="26"/>
+                    <DataGrid x:Name="newInitialMatrixDataGrid" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Height="189" Width="137"/>
+                    <Label x:Name="label2" Content="Initial" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
+                    <DataGrid x:Name="newStateMatrixDataGrid" HorizontalAlignment="Left" Margin="153,41,0,0" VerticalAlignment="Top" Height="189" Width="136"/>
+                    <Label x:Name="label_Copy2" Content="State" HorizontalAlignment="Left" Margin="153,15,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013"/>
+                    <DataGrid x:Name="newObservationMatrixDataGrid" HorizontalAlignment="Left" Margin="294,41,0,0" VerticalAlignment="Top" Height="189" Width="136"/>
+                    <Label x:Name="label_Copy12" Content="Emission &#xD;&#xA;" HorizontalAlignment="Left" Margin="294,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013" Width="65" Height="26"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Wynik">
@@ -51,6 +59,8 @@
                     <DataGrid x:Name="ViterbiStateSequenceDataGrid" HorizontalAlignment="Left" Margin="191,71,0,0" VerticalAlignment="Top" Height="169" Width="148" Grid.Column="1"/>
                     <Label x:Name="label_Copy4" Content="Sekwencja stanów" HorizontalAlignment="Left" Margin="191,40,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.553,0.013" Grid.Column="1" Width="113"/>
                     <Label x:Name="resultLabel" Content="Wyniki: " HorizontalAlignment="Left" Margin="13,9,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="350"/>
+                    <TextBlock x:Name="FBAProbabiltyTextBlock" HorizontalAlignment="Left" Margin="13,245,0,0" TextWrapping="Wrap" Text="Probability: " VerticalAlignment="Top" Width="148" Grid.ColumnSpan="2"/>
+                    <TextBlock x:Name="ViterbiProbabiltyTextBlock" HorizontalAlignment="Left" Margin="191,245,0,0" TextWrapping="Wrap" Text="Probability: " VerticalAlignment="Top" Width="148" Grid.Column="1"/>
                 </Grid>
             </TabItem>
         </TabControl>

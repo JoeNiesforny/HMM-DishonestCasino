@@ -38,14 +38,23 @@ namespace HMM_DishonestCasinoApp
             {
                 throw new ArgumentException("Bad format! Please provide natural number.");
             }
-
             model = new Model(diceCount, throwCount);
-
             observationSequenceDataGrid.ItemsSource = model.ObservationSequence;
             initialMatrixDataGrid.ItemsSource = model.InitialState;
             stateMatrixDataGrid.ItemsSource = model.StateMatrix;
             observationMatrixDataGrid.ItemsSource = model.ObservationMatrix;
         }
 
+        private void compute_button_Click(object sender, RoutedEventArgs e)
+        {
+            model.Compute();
+            FBAStateSequenceDataGrid.ItemsSource = model.ResultForwardBackward.FoundedSequence;
+            FBAProbabiltyTextBlock.Text = "Probability: " + model.ResultForwardBackward.ProbabilityOfSequence;
+            ViterbiStateSequenceDataGrid.ItemsSource = model.ResultViterbi.FoundedSequence;
+            ViterbiProbabiltyTextBlock.Text = "Probability: " + model.ResultViterbi.ProbabilityOfSequence;
+            newInitialMatrixDataGrid.ItemsSource = model.NewModelForwardBackward.InitialState;
+            newStateMatrixDataGrid.ItemsSource = model.NewModelForwardBackward.StateMatrix;
+            newObservationMatrixDataGrid.ItemsSource = model.NewModelForwardBackward.ObservationMatrix;
+        }
     }
 }
