@@ -62,7 +62,7 @@
             int mostState = 0;
             int mostNextState = 0;
             double mostHighestPosibility = 0;
-            for (int index = 0; index < ObservationLengthSequence; index++)
+            for (int index = 0; index < ObservationLengthSequence - 1; index++)
             {
                 mostHighestPosibility = 0;
                 for (int state = 0; state < StatesCount; state++)
